@@ -11,7 +11,9 @@ export default {
       base: colors.stone,
       primary: colors.green,
       secondary: colors.sky,
-      error: colors.red
+      error: colors.red,
+      darkBoardSquare: colors.stone['500'],
+      lightBoardSquare: colors.stone['200'],
     },
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],
