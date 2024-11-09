@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Board from "./Board";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main className="grid grid-cols-6 gap-4 h-screen">
+      <aside className="col-span-1 bg-base-950 text-white p-4">
+        <h2 className="text-lg font-semibold mb-4">Sidebar</h2>
+        <ul className="space-y-2">
+          <li>
+            <a href="#" className="block hover:bg-gray-700 p-2 rounded">
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block hover:bg-gray-700 p-2 rounded">
+              About
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block hover:bg-gray-700 p-2 rounded">
+              Services
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block hover:bg-gray-700 p-2 rounded">
+              Contact
+            </a>
+          </li>
+        </ul>
+      </aside>
+      <div className="col-span-3 bg-gray-400">
+        <Board />       
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="col-span-2 bg-gray-600 p-4">
+        <div className="rounded bg-base-800 h-full">
+          
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </main>
+  );
 }
 
-export default App
+export default App;
