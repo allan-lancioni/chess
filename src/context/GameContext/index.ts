@@ -10,7 +10,7 @@ export type GameContextState = {
 };
 
 export const initialState: GameContextState = {
-  playerColor: WHITE,
+  playerColor: BLACK,
   fen: () => "",
   board: [],
   dispatch: () => void(0),

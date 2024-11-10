@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CanvasBoard from "./CanvasBoard";
 import { useGameContext } from "../../context/GameContext";
 import { getBoardSquare } from "../../context/GameContext/utils/getBoardSquare";
-import { Square } from "chess.js";
+import { BLACK, Square } from "chess.js";
 
 type SquareSize = { width: number; height: number };
 
@@ -15,13 +15,12 @@ const getSquareSize = (value: number): SquareSize => ({
 
 type BoardProps = {
   boardContainerRef: React.RefObject<HTMLDivElement>;
-  playingAs?: "white" | "black";
 };
 
-function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
+function Board({ boardContainerRef }: BoardProps) {
   const [boardSize, setBoardSize] = useState(0);
   const [squareSize, setSquareSize] = useState(0);
-  const { board } = useGameContext();
+  const { board, playerColor } = useGameContext();
   const boardHeightOffset = 100;
 
   const rows: number[] = Array.from(baseArray).reverse();
@@ -29,7 +28,9 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
     String.fromCharCode(96 + row)
   );
 
-  if (playingAs === "black") {
+  console.log(board, playerColor);
+
+  if (playerColor === BLACK) {
     rows.reverse();
     cols.reverse();
   }
@@ -65,7 +66,7 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
             const square = getBoardSquare(board, squareName);
             const style: Pick<React.CSSProperties, "background"> = {}
             if (square?.image) {
-              style.background = `url("${square.image}") center/cover`;
+              style.background = `url("${square.image}") center/cover no-repeat`;
             }
             return (
               <div
@@ -81,7 +82,7 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
           })
         )}
       </div>
-      <CanvasBoard canvasWidth={boardSize} playingAs={playingAs} />
+      <CanvasBoard canvasWidth={boardSize} />
     </section>
   );
 }
