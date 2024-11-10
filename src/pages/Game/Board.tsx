@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import Pieces from "./Pieces";
 import CanvasBoard from "./CanvasBoard";
+import { useGameContext } from "../../context/GameContext";
+import { getBoardSquare } from "../../context/GameContext/utils/getBoardSquare";
+import { Square } from "chess.js";
 
 type SquareSize = { width: number; height: number };
 
@@ -16,26 +18,10 @@ type BoardProps = {
   playingAs?: "white" | "black";
 };
 
-// TODO: remove this hardcoded piece image logic
-function getPieceImage(row: number, col: string): string | null {
-  if (row === 2) return Pieces.WhitePawn;
-  if (row === 7) return Pieces.BlackPawn;
-  if (row === 1 && (col === "a" || col === "h")) return Pieces.WhiteRook;
-  if (row === 8 && (col === "a" || col === "h")) return Pieces.BlackRook;
-  if (row === 1 && (col === "b" || col === "g")) return Pieces.WhiteKnight;
-  if (row === 8 && (col === "b" || col === "g")) return Pieces.BlackKnight;
-  if (row === 1 && (col === "c" || col === "f")) return Pieces.WhiteBishop;
-  if (row === 8 && (col === "c" || col === "f")) return Pieces.BlackBishop;
-  if (row === 1 && col === "d") return Pieces.WhiteQueen;
-  if (row === 8 && col === "d") return Pieces.BlackQueen;
-  if (row === 1 && col === "e") return Pieces.WhiteKing;
-  if (row === 8 && col === "e") return Pieces.BlackKing;
-  return null;
-}
-
 function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
   const [boardSize, setBoardSize] = useState(0);
   const [squareSize, setSquareSize] = useState(0);
+  const { board } = useGameContext();
   const boardHeightOffset = 100;
 
   const rows: number[] = Array.from(baseArray).reverse();
@@ -65,15 +51,6 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
   }, [boardContainerRef]);
 
   if (!boardSize) return null;
-  const getPieceImageStyle = (
-    row: number,
-    col: string
-  ): Pick<React.CSSProperties, "background"> => {
-    const pieceImage = getPieceImage(row, col);
-    return pieceImage
-      ? { background: `url("${getPieceImage(row, col)}") center/cover` }
-      : {};
-  };
 
   return (
     <section className="relative rounded overflow-hidden">
@@ -84,6 +61,12 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
       >
         {rows.map((row) =>
           cols.map((col) => {
+            const squareName = `${col}${row}` as Square;
+            const square = getBoardSquare(board, squareName);
+            const style: Pick<React.CSSProperties, "background"> = {}
+            if (square?.image) {
+              style.background = `url("${square.image}") center/cover`;
+            }
             return (
               <div
                 data-testid="square"
@@ -91,7 +74,7 @@ function Board({ boardContainerRef, playingAs = "white" }: BoardProps) {
                 key={`square_${col + row}`}
                 style={{
                   ...getSquareSize(squareSize),
-                  ...getPieceImageStyle(row, col),
+                  ...style,
                 }}
               ></div>
             );

@@ -1,7 +1,7 @@
-import { GameContextType, initialState } from ".";
+import { GameContextState, initialState } from ".";
 
 export const gameReducer = (
-  state: GameContextType,
+  state: GameContextState,
   action: { type: string; data: null }
 ) => {
   switch (action.type) {
