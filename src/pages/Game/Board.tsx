@@ -3,6 +3,8 @@ import CanvasBoard from "./CanvasBoard";
 import { useGameContext } from "../../context/GameContext";
 import { BLACK, Square } from "chess.js";
 import { useAvailableMoves } from "../../context/GameContext/hooks/useMoves";
+import { getPieceImage } from "../../context/GameContext/utils/getPieceImage";
+import { BoardSquare } from "../../context/GameContext/types";
 
 type SquareSize = { width: number; height: number };
 
@@ -48,6 +50,14 @@ function Board({ boardContainerRef }: BoardProps) {
 
   if (!boardSize) return null;
 
+  const handleClick = (square: Square, isAvailableMove: boolean) => {
+    if (isAvailableMove) {
+      return;
+    }
+    if (!square) return;
+    chooseSquare(square);
+  };
+
   return (
     <section className="relative rounded overflow-hidden">
       <div
@@ -60,17 +70,18 @@ function Board({ boardContainerRef }: BoardProps) {
             const square = `${col}${row}` as Square;
             const squareContent = board
               .flat()
-              .find((s) => s?.square === square);
+              .find((s) => s?.square === square) as BoardSquare | null;
             const isAvailableMove = moves.some((move) => move.to === square);
             const style: Pick<React.CSSProperties, "background"> = {};
-            if (squareContent?.image) {
-              style.background = `url("${squareContent.image}") center/cover no-repeat`;
+            if (squareContent) {
+              const image = getPieceImage(squareContent);
+              style.background = `url("${image}") center/cover no-repeat`;
             }
             return (
               <div
                 data-testid="square"
                 data-square={square}
-                onClick={square ? () => chooseSquare(square) : void 0}
+                onClick={() => handleClick(square, isAvailableMove)}
                 key={"square_" + square}
                 className="flex items-center justify-center"
                 style={{

@@ -1,23 +1,22 @@
 import { createContext, useContext } from "react";
-import { BLACK, Chess, Color, WHITE } from "chess.js";
-import { Board } from "./types";
+import { Chess, Color, WHITE } from "chess.js";
 
 export type GameContextState = {
   playerColor: Color;
   turn: Color;
-  board: Board;
+  board: ReturnType<typeof Chess.prototype.board>;
   moves: typeof Chess.prototype.moves;
   fen: typeof Chess.prototype.fen;
   dispatch: React.Dispatch<{ type: string; data: null }>;
 };
 
 export const initialState: GameContextState = {
-  playerColor: BLACK,
+  playerColor: WHITE,
   turn: WHITE,
   board: [],
   moves: () => [],
   fen: () => "",
-  dispatch: () => void(0),
+  dispatch: () => void 0,
 };
 
 export const GameContext = createContext<GameContextState>(initialState);
@@ -28,4 +27,4 @@ export const useGameContext = () => {
     throw new Error("useGameProvider must be used within a GameProvider");
   }
   return context;
-}
+};

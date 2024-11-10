@@ -1,16 +1,18 @@
-import { BISHOP, Color, KING, KNIGHT, PAWN, PieceSymbol, QUEEN, ROOK, WHITE } from 'chess.js';
-import BlackBishop from '/src/assets/pieces/bb.png';
-import BlackKing from '/src/assets/pieces/bk.png';
-import BlackKnight from '/src/assets/pieces/bn.png';
-import BlackPawn from '/src/assets/pieces/bp.png';
-import BlackQueen from '/src/assets/pieces/bq.png';
-import BlackRook from '/src/assets/pieces/br.png';
-import WhiteBishop from '/src/assets/pieces/wb.png';
-import WhiteKing from '/src/assets/pieces/wk.png';
-import WhiteKnight from '/src/assets/pieces/wn.png';
-import WhitePawn from '/src/assets/pieces/wp.png';
-import WhiteQueen from '/src/assets/pieces/wq.png';
-import WhiteRook from '/src/assets/pieces/wr.png';
+import { BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK, WHITE } from "chess.js";
+import BlackBishop from "/src/assets/pieces/bb.png";
+import BlackKing from "/src/assets/pieces/bk.png";
+import BlackKnight from "/src/assets/pieces/bn.png";
+import BlackPawn from "/src/assets/pieces/bp.png";
+import BlackQueen from "/src/assets/pieces/bq.png";
+import BlackRook from "/src/assets/pieces/br.png";
+import WhiteBishop from "/src/assets/pieces/wb.png";
+import WhiteKing from "/src/assets/pieces/wk.png";
+import WhiteKnight from "/src/assets/pieces/wn.png";
+import WhitePawn from "/src/assets/pieces/wp.png";
+import WhiteQueen from "/src/assets/pieces/wq.png";
+import WhiteRook from "/src/assets/pieces/wr.png";
+import { BoardSquare } from "../types";
+import invariant from "tiny-invariant";
 
 export const PIECES_IMG = {
   BlackBishop,
@@ -24,10 +26,13 @@ export const PIECES_IMG = {
   WhiteKnight,
   WhitePawn,
   WhiteQueen,
-  WhiteRook
-}
+  WhiteRook,
+};
 
-export function getPieceImage({ type, color }: { type: PieceSymbol, color: Color }): string | null {
+export function getPieceImage({
+  type,
+  color,
+}: Pick<BoardSquare, "color" | "type">): string | undefined {
   switch (type) {
     case BISHOP:
       return color === WHITE ? PIECES_IMG.WhiteBishop : PIECES_IMG.BlackBishop;
@@ -42,6 +47,6 @@ export function getPieceImage({ type, color }: { type: PieceSymbol, color: Color
     case ROOK:
       return color === WHITE ? PIECES_IMG.WhiteRook : PIECES_IMG.BlackRook;
     default:
-      return null;
+      invariant(`Image not found for piece ${type} ${color}`);
   }
 }

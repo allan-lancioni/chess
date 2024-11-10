@@ -1,11 +1,12 @@
 import { Color, PieceSymbol, Square } from "chess.js";
 
-type BoardSquareContent = {
+export type BoardSquare = {
   square: Square;
   type: PieceSymbol;
   color: Color;
-  image: string;
-}
+};
 
-export type BoardWithoutImage = (Omit<BoardSquareContent, 'image'> | null)[][]
-export type Board = (BoardSquareContent | null)[][]
+export const actionTypes = {
+  MOVE: "MOVE",
+  RESET: "RESET",
+};
