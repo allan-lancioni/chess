@@ -1,16 +1,22 @@
 import { useRef } from "react";
 import Board from "./Board";
+import { GameProvider } from "../../context/GameContext/Provider";
 
 function Game() {
   const boardContainer = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="grid md:grid-cols-3 gap-4 h-screen">
-      <div className="md:col-span-2 bg-gray-400 flex items-center justify-center" ref={boardContainer}> 
-        <Board boardContainerRef={boardContainer} />
-      </div>
-      <RightColumn />
-    </section>
+    <GameProvider>
+      <section className="grid md:grid-cols-3 gap-4 h-screen">
+        <div
+          className="md:col-span-2 bg-gray-400 flex items-center justify-center"
+          ref={boardContainer}
+        >
+          <Board boardContainerRef={boardContainer} />
+        </div>
+        <RightColumn />
+      </section>
+    </GameProvider>
   );
 }
 
@@ -22,4 +28,4 @@ function RightColumn() {
   );
 }
 
-export default Game
+export default Game;
