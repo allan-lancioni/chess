@@ -13,8 +13,10 @@ function GameProvider({ children }: { children: React.ReactNode }) {
 
   const newState: GameContextState = { 
     ...state,
-    fen: chess.current.fen,
     board,
+    turn: chess.current.turn(),
+    moves: chess.current.moves.bind(chess.current),
+    fen: chess.current.fen.bind(chess.current),
     dispatch
   }
 

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CanvasBoard from "./CanvasBoard";
 import { useGameContext } from "../../context/GameContext";
-import { getBoardSquare } from "../../context/GameContext/utils/getBoardSquare";
 import { BLACK, Square } from "chess.js";
+import { useAvailableMoves } from "../../context/GameContext/hooks/useMoves";
 
 type SquareSize = { width: number; height: number };
 
@@ -19,16 +19,15 @@ type BoardProps = {
 
 function Board({ boardContainerRef }: BoardProps) {
   const [boardSize, setBoardSize] = useState(0);
-  const [squareSize, setSquareSize] = useState(0);
+  const squareSize = useMemo(() => boardSize / 8, [boardSize]);
   const { board, playerColor } = useGameContext();
   const boardHeightOffset = 100;
+  const { moves, getMoves } = useAvailableMoves();
 
   const rows: number[] = Array.from(baseArray).reverse();
   const cols: string[] = Array.from(baseArray).map((row) =>
     String.fromCharCode(96 + row)
   );
-
-  console.log(board, playerColor);
 
   if (playerColor === BLACK) {
     rows.reverse();
@@ -37,14 +36,10 @@ function Board({ boardContainerRef }: BoardProps) {
 
   useEffect(() => {
     const handleResize = () => {
-      const { width, height } =
-        boardContainerRef.current?.getBoundingClientRect() || {
-          width: 0,
-          height: 0,
-        };
-      const _boardSize = Math.min(width, height - boardHeightOffset);
+      const size =
+        boardContainerRef.current?.getBoundingClientRect() || getSquareSize(0);
+      const _boardSize = Math.min(size.width, size.height - boardHeightOffset);
       setBoardSize(_boardSize);
-      setSquareSize(_boardSize / 8);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -62,22 +57,28 @@ function Board({ boardContainerRef }: BoardProps) {
       >
         {rows.map((row) =>
           cols.map((col) => {
-            const squareName = `${col}${row}` as Square;
-            const square = getBoardSquare(board, squareName);
-            const style: Pick<React.CSSProperties, "background"> = {}
-            if (square?.image) {
-              style.background = `url("${square.image}") center/cover no-repeat`;
+            const square = `${col}${row}` as Square;
+            const squareContent = board
+              .flat()
+              .find((s) => s?.square === square);
+            const isAvailableMove = moves.some((move) => move.to === square);
+            const style: Pick<React.CSSProperties, "background"> = {};
+            if (squareContent?.image) {
+              style.background = `url("${squareContent.image}") center/cover no-repeat`;
             }
             return (
               <div
                 data-testid="square"
-                data-square={`${col}${row}`}
-                key={`square_${col + row}`}
+                data-square={square}
+                onClick={square ? () => getMoves(square) : void 0}
+                className="flex items-center justify-center"
                 style={{
                   ...getSquareSize(squareSize),
                   ...style,
                 }}
-              ></div>
+              >
+                { isAvailableMove && <div className="h-[30%] w-[30%] rounded-full bg-base-950 opacity-20"></div> }
+              </div>
             );
           })
         )}
