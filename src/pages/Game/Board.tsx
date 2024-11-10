@@ -22,7 +22,7 @@ function Board({ boardContainerRef }: BoardProps) {
   const squareSize = useMemo(() => boardSize / 8, [boardSize]);
   const { board, playerColor } = useGameContext();
   const boardHeightOffset = 100;
-  const { moves, getMoves } = useAvailableMoves();
+  const { moves, chooseSquare } = useAvailableMoves();
 
   const rows: number[] = Array.from(baseArray).reverse();
   const cols: string[] = Array.from(baseArray).map((row) =>
@@ -58,9 +58,7 @@ function Board({ boardContainerRef }: BoardProps) {
         {rows.map((row) =>
           cols.map((col) => {
             const square = `${col}${row}` as Square;
-            const squareContent = board
-              .flat()
-              .find((s) => s?.square === square);
+            const squareContent = board.flat().find((s) => s?.square === square);
             const isAvailableMove = moves.some((move) => move.to === square);
             const style: Pick<React.CSSProperties, "background"> = {};
             if (squareContent?.image) {
@@ -70,7 +68,7 @@ function Board({ boardContainerRef }: BoardProps) {
               <div
                 data-testid="square"
                 data-square={square}
-                onClick={square ? () => getMoves(square) : void 0}
+                onClick={square ? () => chooseSquare(square) : void 0}
                 className="flex items-center justify-center"
                 style={{
                   ...getSquareSize(squareSize),

@@ -6,10 +6,10 @@ export function useAvailableMoves() {
   const [moves, setMoves] = useState<Move[]>([]);
   const { moves: chessMoves } = useContext(GameContext);
   
-  const getMoves = (square: Square): void => {
+  const chooseSquare = (square: Square): void => {
     const availableMoves = chessMoves({ square, verbose: true });
     setMoves(availableMoves);
   }
 
-  return { moves, getMoves };
+  return { moves, chooseSquare };
 }
