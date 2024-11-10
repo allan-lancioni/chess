@@ -1,19 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import CanvasBoard from "./CanvasBoard";
 import { useGameContext } from "../../context/GameContext";
-import { BLACK, Square } from "chess.js";
+import { BLACK, Move, Square } from "chess.js";
 import { useAvailableMoves } from "../../context/GameContext/hooks/useMoves";
 import { getPieceImage } from "../../context/GameContext/utils/getPieceImage";
-import { BoardSquare } from "../../context/GameContext/types";
+import { Board as TBoard, BoardSquare } from "../../context/GameContext/types";
+import styles from "./Board.module.css";
 
 type SquareSize = { width: number; height: number };
 
 const baseArray = [1, 2, 3, 4, 5, 6, 7, 8];
-
-const getSquareSize = (value: number): SquareSize => ({
-  width: value,
-  height: value,
-});
 
 type BoardProps = {
   boardContainerRef: React.RefObject<HTMLDivElement>;
@@ -23,8 +19,8 @@ function Board({ boardContainerRef }: BoardProps) {
   const [boardSize, setBoardSize] = useState(0);
   const squareSize = useMemo(() => boardSize / 8, [boardSize]);
   const { board, playerColor, move } = useGameContext();
+  const { selectedSquare, moves, chooseSquare } = useAvailableMoves();
   const boardHeightOffset = 100;
-  const { moves, chooseSquare } = useAvailableMoves();
 
   const rows: number[] = Array.from(baseArray).reverse();
   const cols: string[] = Array.from(baseArray).map((row) =>
@@ -71,31 +67,22 @@ function Board({ boardContainerRef }: BoardProps) {
         {rows.map((row) =>
           cols.map((col) => {
             const square = `${col}${row}` as Square;
-            const squareContent = board
-              .flat()
-              .find((s) => s?.square === square) as BoardSquare | null;
-            const isAvailableMove = moves.some((move) => move.to === square);
-            const style: Pick<React.CSSProperties, "background"> = {};
-            if (squareContent) {
-              const image = getPieceImage(squareContent);
-              style.background = `url("${image}") center/cover no-repeat`;
-            }
+            const squareContent = getSquareContent(board, square);
+            const availableMove = getAvailableMove(square, moves);
             return (
               <div
                 data-testid="square"
                 data-square={square}
+                data-is-selected={selectedSquare === square}
+                data-available-move={availableMove}
                 onClick={() => handleClick(square)}
                 key={"square_" + square}
-                className="flex items-center justify-center"
+                className={styles.boardSquare}
                 style={{
                   ...getSquareSize(squareSize),
-                  ...style,
+                  ...getSquareStyle(squareContent),
                 }}
-              >
-                {isAvailableMove && (
-                  <div className="h-[30%] w-[30%] rounded-full bg-base-950 opacity-20"></div>
-                )}
-              </div>
+              ></div>
             );
           }),
         )}
@@ -103,6 +90,31 @@ function Board({ boardContainerRef }: BoardProps) {
       <CanvasBoard canvasWidth={boardSize} />
     </section>
   );
+}
+
+function getSquareContent(board: TBoard, square: Square): BoardSquare | null {
+  return board.flat().find((s) => s?.square === square) as BoardSquare | null;
+}
+
+function getSquareStyle(bsq: BoardSquare | null) {
+  const style: Partial<React.CSSProperties> = {};
+  if (bsq) {
+    const image = getPieceImage(bsq);
+    style.backgroundImage = `url("${image}")`;
+    style.backgroundSize = "cover";
+  }
+  return style;
+}
+
+function getSquareSize(value: number): SquareSize {
+  return { width: value, height: value };
+}
+
+type PossibleMove = "move" | "capture" | null;
+function getAvailableMove(square: Square, moves: Move[]): PossibleMove {
+  const move = moves.find((m) => m.to === square);
+  if (!move) return null;
+  return move.captured ? "capture" : "move";
 }
 
 export default Board;

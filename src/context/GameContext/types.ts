@@ -1,10 +1,12 @@
-import { Color, Move, PieceSymbol, Square } from "chess.js";
+import { Chess, Color, Move, PieceSymbol, Square } from "chess.js";
 
 export type BoardSquare = {
   square: Square;
   type: PieceSymbol;
   color: Color;
 };
+
+export type Board = ReturnType<typeof Chess.prototype.board>;
 
 export const actionTypes = {
   MOVE: "MOVE",
