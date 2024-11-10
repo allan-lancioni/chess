@@ -1,22 +1,24 @@
 import { createContext, useContext } from "react";
 import { Chess, Color, WHITE } from "chess.js";
+import contextActions from "./actions";
 
 export type GameContextState = {
+  _chess: Chess;
   playerColor: Color;
   turn: Color;
   board: ReturnType<typeof Chess.prototype.board>;
   moves: typeof Chess.prototype.moves;
   fen: typeof Chess.prototype.fen;
-  dispatch: React.Dispatch<{ type: string; data: null }>;
-};
+} & ReturnType<typeof contextActions>;
 
 export const initialState: GameContextState = {
+  _chess: new Chess(),
   playerColor: WHITE,
   turn: WHITE,
   board: [],
   moves: () => [],
   fen: () => "",
-  dispatch: () => void 0,
+  ...contextActions(() => {}),
 };
 
 export const GameContext = createContext<GameContextState>(initialState);

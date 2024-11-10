@@ -1,19 +1,20 @@
-import { useReducer, useRef } from "react";
+import { useReducer } from "react";
 import { GameContext, GameContextState, initialState } from ".";
 import { gameReducer } from "./reducer";
-import { Chess } from "chess.js";
+import contextActions from "./actions";
 
 function GameProvider({ children }: { children: React.ReactNode }) {
-  const chess = useRef(new Chess());
   const [state, dispatch] = useReducer(gameReducer, initialState);
+  const actions = contextActions(dispatch);
+  const chess = state._chess;
 
   const newState: GameContextState = {
     ...state,
-    board: chess.current.board(),
-    turn: chess.current.turn(),
-    moves: chess.current.moves.bind(chess.current),
-    fen: chess.current.fen.bind(chess.current),
-    dispatch,
+    ...actions,
+    board: chess.board(),
+    turn: chess.turn(),
+    moves: chess.moves.bind(chess),
+    fen: chess.fen.bind(chess),
   };
 
   return (

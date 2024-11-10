@@ -22,7 +22,7 @@ type BoardProps = {
 function Board({ boardContainerRef }: BoardProps) {
   const [boardSize, setBoardSize] = useState(0);
   const squareSize = useMemo(() => boardSize / 8, [boardSize]);
-  const { board, playerColor } = useGameContext();
+  const { board, playerColor, move } = useGameContext();
   const boardHeightOffset = 100;
   const { moves, chooseSquare } = useAvailableMoves();
 
@@ -50,8 +50,11 @@ function Board({ boardContainerRef }: BoardProps) {
 
   if (!boardSize) return null;
 
-  const handleClick = (square: Square, isAvailableMove: boolean) => {
-    if (isAvailableMove) {
+  const handleClick = (square: Square) => {
+    const availableMove = moves.find((move) => move.to === square);
+    if (availableMove) {
+      chooseSquare(null);
+      move(availableMove);
       return;
     }
     if (!square) return;
@@ -81,7 +84,7 @@ function Board({ boardContainerRef }: BoardProps) {
               <div
                 data-testid="square"
                 data-square={square}
-                onClick={() => handleClick(square, isAvailableMove)}
+                onClick={() => handleClick(square)}
                 key={"square_" + square}
                 className="flex items-center justify-center"
                 style={{

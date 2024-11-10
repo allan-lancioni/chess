@@ -5,11 +5,15 @@ import { Move, Square } from "chess.js";
 export function useAvailableMoves() {
   const [moves, setMoves] = useState<Move[]>([]);
   const { moves: chessMoves } = useContext(GameContext);
-  
-  const chooseSquare = (square: Square): void => {
+
+  const chooseSquare = (square: Square | null): void => {
+    if (!square) {
+      setMoves([]);
+      return;
+    }
     const availableMoves = chessMoves({ square, verbose: true });
     setMoves(availableMoves);
-  }
+  };
 
   return { moves, chooseSquare };
 }
