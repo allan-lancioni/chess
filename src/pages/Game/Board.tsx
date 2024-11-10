@@ -26,7 +26,7 @@ function Board({ boardContainerRef }: BoardProps) {
 
   const rows: number[] = Array.from(baseArray).reverse();
   const cols: string[] = Array.from(baseArray).map((row) =>
-    String.fromCharCode(96 + row)
+    String.fromCharCode(96 + row),
   );
 
   if (playerColor === BLACK) {
@@ -58,7 +58,9 @@ function Board({ boardContainerRef }: BoardProps) {
         {rows.map((row) =>
           cols.map((col) => {
             const square = `${col}${row}` as Square;
-            const squareContent = board.flat().find((s) => s?.square === square);
+            const squareContent = board
+              .flat()
+              .find((s) => s?.square === square);
             const isAvailableMove = moves.some((move) => move.to === square);
             const style: Pick<React.CSSProperties, "background"> = {};
             if (squareContent?.image) {
@@ -69,16 +71,19 @@ function Board({ boardContainerRef }: BoardProps) {
                 data-testid="square"
                 data-square={square}
                 onClick={square ? () => chooseSquare(square) : void 0}
+                key={"square_" + square}
                 className="flex items-center justify-center"
                 style={{
                   ...getSquareSize(squareSize),
                   ...style,
                 }}
               >
-                { isAvailableMove && <div className="h-[30%] w-[30%] rounded-full bg-base-950 opacity-20"></div> }
+                {isAvailableMove && (
+                  <div className="h-[30%] w-[30%] rounded-full bg-base-950 opacity-20"></div>
+                )}
               </div>
             );
-          })
+          }),
         )}
       </div>
       <CanvasBoard canvasWidth={boardSize} />
